@@ -6,11 +6,10 @@
 <p>Count numbers: <output id="result"></output></p>
 <p>Threads: <output id="ids"></output></p>
 
-<button onclick="startWorker()">Start Worker</button> 
-<button onclick="stopWorker()">Stop Worker</button>
+<button onclick="startWorker()">Start streaming</button> 
+<button onclick="stopWorker()">Stop streaming</button>
 <input type="text" id="name" name="name" required minlength="4" maxlength="40" size="40" />
 
-<p><strong>Note:</strong> Internet Explorer 9 and earlier versions do not support Web Workers.</p>
 <script>
 var threads = new Map();
 var str;
@@ -33,7 +32,7 @@ function startWorker() {
       document.getElementById("result").innerHTML = `${counts} ${event.data}`;
     };
   } else {
-    document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Workers...";
+    document.getElementById("result").innerHTML = "Web workers not supported.";
   }
 }
 
