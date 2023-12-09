@@ -16,6 +16,7 @@
 
 <script>
 var threads = new Map();
+var counterLabels = new Map();
 var str;
 
 function startWorker() {
@@ -26,16 +27,30 @@ function startWorker() {
         newThread = new Worker("stream.js");
         newThread.postMessage({
             command: "stream",
-            filename: `${startFilename}.bin`
+            filename: `${startFilename}.bin`,
+            idValue: id.slice(0, 4)
         });
         threads.set(id.slice(0, 4), newThread);
         var str;
         threads.forEach((value, key) => {str+=`  ${key} `;});
         document.getElementById("ids").innerHTML = str;
-    newThread.onmessage = function(event) {
-        var counts = document.getElementById("result").innerHTML;
-      document.getElementById("result").innerHTML = `${counts} ${event.data}`;
-    };
+
+        br = document.createElement('br');
+        document.body.appendChild(br);
+        newLabel = document.createElement('label');
+        newLabel.textContent = '';
+        document.body.appendChild(newLabel);
+        counterLabels.set(id.slice(0, 4), newLabel);
+
+        newThread.onmessage = function(event) {
+            var counts = document.getElementById("result").innerHTML;
+            document.getElementById("result").innerHTML = `${event.data.idValue} ${event.data.value}`;
+            var label = counterLabels.get(event.data.idValue);
+            if(label !=null)
+            {
+                label.textContent = `${event.data.idValue} ${event.data.value}`;
+            }
+        };
   } else {
     document.getElementById("result").innerHTML = "Web workers not supported.";
   }
@@ -53,6 +68,11 @@ function stopWorker() {
     }
     else{
         console.log(`Cannot find thread ${theText}`);
+    }
+    var label = counterLabels.get(theText.slice(0, 4));
+    if(label !=null)
+    {
+        document.body.removeChild(label);
     }
 }
 
