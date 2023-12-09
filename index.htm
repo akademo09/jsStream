@@ -21,8 +21,8 @@ var str;
 
 function startWorker() {
     var newThread;
-  if(typeof(Worker) !== "undefined") {
-        var id = uuidv4();
+    if(typeof(Worker) !== "undefined") {
+        var id = createGuid();
         document.getElementById('stopThreadId').value = '';
         let startFilename = document.getElementById('startFilename').value;
         newThread = new Worker("stream.js");
@@ -51,10 +51,10 @@ function startWorker() {
             {
                 label.textContent = `${event.data.filenameValue}    ${event.data.idValue}    ${event.data.value} `;
             }
-        };
-  } else {
-    document.getElementById("result").innerHTML = "Web workers not supported.";
-  }
+    };
+    } else {
+        document.getElementById("result").innerHTML = "Web workers not supported.";
+    }
 }
 
 function stopWorker() { 
@@ -80,7 +80,7 @@ function stopWorker() {
     document.getElementById("ids").innerHTML = str;
 }
 
-function uuidv4() {
+function createGuid() {
   return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
   );
