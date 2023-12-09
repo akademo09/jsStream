@@ -3,7 +3,7 @@
     <script src="stream.js"></script>
 <body>
 
-<p>Count numbers: <output id="result"></output></p>
+<!-- <p>Count numbers: <output id="result"></output></p> -->
 <p>Threads: <output id="ids"></output></p>
 
 <button onclick="startWorker()">Start streaming</button>
@@ -23,6 +23,7 @@ function startWorker() {
     var newThread;
   if(typeof(Worker) !== "undefined") {
         var id = uuidv4();
+        document.getElementById('stopThreadId').value = '';
         let startFilename = document.getElementById('startFilename').value;
         newThread = new Worker("stream.js");
         newThread.postMessage({
@@ -31,8 +32,8 @@ function startWorker() {
             idValue: id.slice(0, 4)
         });
         threads.set(id.slice(0, 4), newThread);
-        var str;
-        threads.forEach((value, key) => {str+=`  ${key} `;});
+        var str = '';
+        threads.forEach((value, key) => {str+=`${key} `;});
         document.getElementById("ids").innerHTML = str;
 
         br = document.createElement('br');
@@ -43,8 +44,8 @@ function startWorker() {
         counterLabels.set(id.slice(0, 4), newLabel);
 
         newThread.onmessage = function(event) {
-            var counts = document.getElementById("result").innerHTML;
-            document.getElementById("result").innerHTML = `${event.data.idValue} ${event.data.value}`;
+            //var counts = document.getElementById("result").innerHTML;
+            //document.getElementById("result").innerHTML = `${event.data.idValue} ${event.data.value}`;
             var label = counterLabels.get(event.data.idValue);
             if(label !=null)
             {
@@ -57,14 +58,14 @@ function startWorker() {
 }
 
 function stopWorker() { 
-    let theText = document.getElementById('stopThreadId').value;
+    let theText = document.getElementById('stopThreadId').value.trim();
     var threadToEnd = threads.get(theText.slice(0, 4));
     if(threadToEnd !=null)
     {
         console.log(`Ending ${theText}`);
+        threads.delete(theText.slice(0, 4));
         threadToEnd.terminate();
         threadToEnd = undefined;
-        threads.delete(threadToEnd);
     }
     else{
         console.log(`Cannot find thread ${theText}`);
@@ -74,6 +75,8 @@ function stopWorker() {
     {
         document.body.removeChild(label);
     }
+    threads.forEach((value, key) => {str+=`  ${key} `;});
+    document.getElementById("ids").innerHTML = str;
 }
 
 function uuidv4() {
