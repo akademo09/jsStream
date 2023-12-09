@@ -6,9 +6,13 @@
 <p>Count numbers: <output id="result"></output></p>
 <p>Threads: <output id="ids"></output></p>
 
-<button onclick="startWorker()">Start streaming</button> 
+<button onclick="startWorker()">Start streaming</button>
+<label>Filename:</label> 
+<input type="text" id="startFilename" name="startFilename" required minlength="4" maxlength="40" size="40" />
+<br/>
 <button onclick="stopWorker()">Stop streaming</button>
-<input type="text" id="name" name="name" required minlength="4" maxlength="40" size="40" />
+<label>Stop thread ID:</label>
+<input type="text" id="stopThreadId" name="stopThreadId" required minlength="4" maxlength="40" size="40" />
 
 <script>
 var threads = new Map();
@@ -18,10 +22,11 @@ function startWorker() {
     var newThread;
   if(typeof(Worker) !== "undefined") {
         var id = uuidv4();
+        let startFilename = document.getElementById('startFilename').value;
         newThread = new Worker("stream.js");
         newThread.postMessage({
             command: "stream",
-            filename: "file.bin"
+            filename: `${startFilename}.bin`
         });
         threads.set(id.slice(0, 4), newThread);
         var str;
@@ -37,7 +42,7 @@ function startWorker() {
 }
 
 function stopWorker() { 
-    let theText = document.getElementById('name').value;
+    let theText = document.getElementById('stopThreadId').value;
     var threadToEnd = threads.get(theText.slice(0, 4));
     if(threadToEnd !=null)
     {
