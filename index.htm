@@ -4,15 +4,15 @@
 <body>
 
 <!-- <p>Count numbers: <output id="result"></output></p> -->
-<p>Threads: <output id="ids"></output></p>
+<p>Thread IDs: <output id="ids"></output></p>
 
 <button onclick="startWorker()">Start streaming</button>
 <label>Filename:</label> 
-<input type="text" id="startFilename" name="startFilename" required minlength="4" maxlength="40" size="40" />
+<input type="text" id="startFilename" name="startFilename" required minlength="4" maxlength="20" size="20" />
 <br/>
 <button onclick="stopWorker()">Stop streaming</button>
 <label>Stop thread ID:</label>
-<input type="text" id="stopThreadId" name="stopThreadId" required minlength="4" maxlength="40" size="40" />
+<input type="text" id="stopThreadId" name="stopThreadId" required minlength="4" maxlength="5" size="5" />
 
 <script>
 var threads = new Map();
@@ -49,7 +49,7 @@ function startWorker() {
             var label = counterLabels.get(event.data.idValue);
             if(label !=null)
             {
-                label.textContent = `${event.data.idValue} ${event.data.value}`;
+                label.textContent = `${event.data.filenameValue}    ${event.data.idValue}    ${event.data.value} `;
             }
         };
   } else {
@@ -75,6 +75,7 @@ function stopWorker() {
     {
         document.body.removeChild(label);
     }
+    str = '';
     threads.forEach((value, key) => {str+=`  ${key} `;});
     document.getElementById("ids").innerHTML = str;
 }
