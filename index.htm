@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <script src="stream.js"></script>
+<body>
+
+<p>Count numbers: <output id="result"></output></p>
+<p>Threads: <output id="ids"></output></p>
+
+<button onclick="startWorker()">Start Worker</button> 
+<button onclick="stopWorker()">Stop Worker</button>
+<input type="text" id="name" name="name" required minlength="4" maxlength="40" size="40" />
+
+<p><strong>Note:</strong> Internet Explorer 9 and earlier versions do not support Web Workers.</p>
+<script>
+var threads = new Map();
+var str;
+
+function startWorker() {
+    var newThread;
+  if(typeof(Worker) !== "undefined") {
+        var id = uuidv4();
+        newThread = new Worker("stream.js");
+        newThread.postMessage({
+            command: "stream",
+            filename: "file.bin"
+        });
+        threads.set(id.slice(0, 4), newThread);
+        var str;
+        threads.forEach((value, key) => {str+=`  ${key} `;});
+        document.getElementById("ids").innerHTML = str;
+    newThread.onmessage = function(event) {
+        var counts = document.getElementById("result").innerHTML;
+      document.getElementById("result").innerHTML = `${counts} ${event.data}`;
+    };
+  } else {
+    document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Workers...";
+  }
+}
+
+function stopWorker() { 
+    let theText = document.getElementById('name').value;
+    var threadToEnd = threads.get(theText.slice(0, 4));
+    if(threadToEnd !=null)
+    {
+        console.log(`Ending ${theText}`);
+        threadToEnd.terminate();
+        threadToEnd = undefined;
+        threads.delete(threadToEnd);
+    }
+    else{
+        console.log(`Cannot find thread ${theText}`);
+    }
+}
+
+function uuidv4() {
+  return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
+</script>
+
+</body>
+</html>
